@@ -1,6 +1,5 @@
-package ueb9;
-
 import java.util.*;
+import ueb9.Punkt;
 
 public interface PunktBaum {
 	/**
@@ -11,7 +10,7 @@ public interface PunktBaum {
 	 * @return true gdw Punkt wurde neu eingefügt, false sonst
 	 */
 	public boolean insert(Punkt p);
-	
+
 	/**
 	 * Holen eines Punkts. Falls ein Punkt mit gleichem x und gleichem y Wert
 	 * vorhanden ist, dann wird dieser zurückgegeben. Ansonsten wird null
@@ -21,7 +20,7 @@ public interface PunktBaum {
 	 * @return Punkt mit x und y Wert wenn vorhanden, null sonst
 	 */
 	public Punkt get(int x, int y);
-	
+
 	/**
 	 * Suche den Punkt, der den geringsten Abstand zu einem Punkt p hat.
 	 * @param p Punkt, von dem aus der nahste gesucht wird
@@ -31,7 +30,7 @@ public interface PunktBaum {
 	public Punkt nahster(Punkt p);
 
 	/**
-	 * Suche den Punkt, der den geringsten Abstand zu einem (nicht 
+	 * Suche den Punkt, der den geringsten Abstand zu einem (nicht
 	 * notwendigerweise existierenden) Punkt p mit x Wert x und y Wert y
 	 * hat.
 	 * @param x int x Wert des (hypothetischen) Punkts, von dem der nahste gesucht wird
@@ -40,39 +39,39 @@ public interface PunktBaum {
 	 *         ist, null sonst
 	 */
 	public Punkt nahster(int x, int y);
-	
+
 	/**
-	 * Iterator über alle Punkte, deren x Wert zwischen 
-	 * xmin und xmax liegt (xmin <= x <= xmax) sowie y Wert zwischen 
+	 * Iterator über alle Punkte, deren x Wert zwischen
+	 * xmin und xmax liegt (xmin <= x <= xmax) sowie y Wert zwischen
 	 * ymin und ymax liegt (xmax <= y <= ymax).
-	 * @param xmin int alle x Werte müssen größer gleich xmin sein 
-	 * @param xmax int alle x Werte müssen kleiner gleich xmax sein 
-	 * @param ymin int alle y Werte müssen größer gleich ymin sein  
+	 * @param xmin int alle x Werte müssen größer gleich xmin sein
+	 * @param xmax int alle x Werte müssen kleiner gleich xmax sein
+	 * @param ymin int alle y Werte müssen größer gleich ymin sein
 	 * @param ymax int alle y Werte müssen kleiner gleich ymax sein
 	 * @return Iterator über alle Punkte mit x,y Werten, so dass xmin <= x <= xmax und ymin <= y <= ymax
 	 */
 	public Iterator<Punkt> iterator(int xmin, int  xmax, int ymin, int ymax);
 
 	/**
-	 * Iterator über alle Punkte, deren x Wert zwischen 
+	 * Iterator über alle Punkte, deren x Wert zwischen
 	 * xmin und xmax liegt (xmin <= x <= xmax).
-	 * @param xmin int alle x Werte müssen größer gleich xmin sein 
-	 * @param xmax int alle x Werte müssen kleiner gleich xmax sein 
+	 * @param xmin int alle x Werte müssen größer gleich xmin sein
+	 * @param xmax int alle x Werte müssen kleiner gleich xmax sein
 	 * @return Iterator über alle Punkte mit x Werten, so dass xmin <= x <= xmax
 	 */
 	public Iterator<Punkt> iteratorx(int xmin, int xmax);
 
 	/**
 	 * Iterator über alle Punkte, deren x Wert festliegt
-	 * @param x int alle x Werte müssen gleich x sein 
+	 * @param x int alle x Werte müssen gleich x sein
 	 * @return Iterator über alle Punkte mit x Wert gleich x
 	 */
 	public Iterator<Punkt> iteratorx(int x);
 
 	/**
-	 * Iterator über alle Punkte, deren y Wert zwischen 
+	 * Iterator über alle Punkte, deren y Wert zwischen
 	 * ymin und ymax liegt (xmax <= y <= ymax).
-	 * @param ymin int alle y Werte müssen größer gleich ymin sein  
+	 * @param ymin int alle y Werte müssen größer gleich ymin sein
 	 * @param ymax int alle y Werte müssen kleiner gleich ymax sein
 	 * @return Iterator über alle Punkte mit y Werten, so dass ymin <= y <= ymax
 	 */
