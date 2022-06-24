@@ -1,8 +1,65 @@
 import java.util.Iterator;
-import ueb9.Punkt;
+// import ueb9.Punkt;
 
 public class ZweiDBaum implements PunktBaum {
     private Knoten root;
+    
+    private class Knoten {
+        Knoten left;
+        Punkt punkt;
+        Knoten right;
+        boolean xOderY;
+
+        public Knoten(Knoten left, Punkt punkt, Knoten right, boolean x) {
+            this.left = left;
+            this.punkt = punkt;
+            this.right = right;
+            this.xOderY = x;
+        }
+
+        /**
+        public Knoten getLeft() {
+            return left;
+        }
+
+        public void setLeft(Knoten left) {
+            this.left = left;
+        }
+
+        public Punkt getPunkt() {
+            return punkt;
+        }
+
+        public void setPunkt(Punkt punkt) {
+            this.punkt = punkt;
+        }
+
+        public Knoten getRight() {
+            return right;
+        }
+
+        public void setRight(Knoten right) {
+            this.right = right;
+        }
+
+        public boolean isX() {
+            return xOderY;
+        }
+
+        public void setXOderY(boolean x) {
+            this.xOderY = x;
+        }
+        */
+        
+        public int getX() {
+        	return punkt.getX();
+        }
+        
+        public int getY() {
+        	return punkt.getY();
+        }
+       
+    }
 
     public ZweiDBaum() {
         root = null;
@@ -18,12 +75,77 @@ public class ZweiDBaum implements PunktBaum {
      * Ansonsten wird der Punkt neu eingefügt (Rückgabe true).
      *
      * @param p Punkt, der einzufügen ist
+     * @param inserted[0] true, wenn neuer Punkt; false, wenn �berschrieben
+     * @param inserted[1] true, wenn eingef�gt, sonst false
      * @return true gdw Punkt wurde neu eingefügt, false sonst
      */
     @Override
     public boolean insert(Punkt p) {
-        return false;
+    	boolean inserted[] = new boolean[2];
+    	inserted[1] = false;
+    	Knoten aktKnoten = root;
+    	while(!inserted[1]) {
+    		compareCoord(p, inserted, aktKnoten);
+    	}
+        return inserted[0];
     }
+
+	private void compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
+		if(aktKnoten.xOderY) {
+			if(p.getX() <= aktKnoten.getX()) {
+				//links
+				checkNext(p, aktKnoten, inserted, Richtung.LINKS);
+			} else {
+				//rechts
+				checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
+			}
+		} else {
+			if(p.getY() <= aktKnoten.getY()) {
+				//links
+				checkNext(p, aktKnoten, inserted, Richtung.LINKS);
+			} else {
+				//rechts
+				checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
+			}
+		}
+	}
+
+    /**
+     * 
+     * @param p
+     * @param aktKnoten
+     * @param richtung true = links
+     * @return
+     */
+	private void checkNext(Punkt p, Knoten aktKnoten, boolean[] inserted, Richtung r) {
+		if(r == Richtung.LINKS) {
+			if(aktKnoten.left == null) {
+				aktKnoten.left = new Knoten(null, p, null, !aktKnoten.xOderY);
+				inserted[0] = true;
+				inserted[1] = true;
+			} else if(aktKnoten.left.punkt.equals(p)) {
+				aktKnoten.left.punkt = p;
+				inserted[0] = false;
+				inserted[1] = true;
+			} else {
+				aktKnoten = new Knoten(aktKnoten.getLeft(), aktKnoten.getPunkt(), aktKnoten.right, aktKnoten.xOderY);
+				inserted[1] = false;
+			}
+		} else {
+			if(aktKnoten.getRight() == null) {
+				aktKnoten.setRight(new Knoten(null, p, null, !aktKnoten.isX()));
+				inserted[0] = true;
+				inserted[1] = true;
+			} else if(aktKnoten.getRight().getPunkt().equals(p)) {
+				aktKnoten.getRight().setPunkt(p);
+				inserted[0] = false;
+				inserted[1] = true;
+			} else {
+				aktKnoten = aktKnoten.getRight();
+				inserted[1] = false;
+			}
+		}
+	}
 
     /**
      * Holen eines Punkts. Falls ein Punkt mit gleichem x und gleichem y Wert

@@ -1,5 +1,5 @@
 import java.util.*;
-import ueb9.Punkt;
+// import ueb9.Punkt;
 
 public interface PunktBaum {
 	/**

@@ -1,4 +1,4 @@
-package ueb9;
+// package ueb9;
 
 /**
  * Punkt repräsentiert einen unveränderlichen Datensatz mit zwei 
