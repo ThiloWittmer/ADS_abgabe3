@@ -75,8 +75,8 @@ public class ZweiDBaum implements PunktBaum {
      * Ansonsten wird der Punkt neu eingefügt (Rückgabe true).
      *
      * @param p Punkt, der einzufügen ist
-     * @param inserted[0] true, wenn neuer Punkt; false, wenn �berschrieben
-     * @param inserted[1] true, wenn eingef�gt, sonst false
+     * @param inserted[0] true, wenn neuer Punkt; false, wenn �berschrieben
+     * @param inserted[1] true, wenn eingef�gt, sonst false
      * @return true gdw Punkt wurde neu eingefügt, false sonst
      */
     @Override
@@ -128,20 +128,20 @@ public class ZweiDBaum implements PunktBaum {
 				inserted[0] = false;
 				inserted[1] = true;
 			} else {
-				aktKnoten = new Knoten(aktKnoten.getLeft(), aktKnoten.getPunkt(), aktKnoten.right, aktKnoten.xOderY);
+				aktKnoten = new Knoten(aktKnoten.left, aktKnoten.punkt, aktKnoten.right, aktKnoten.xOderY);
 				inserted[1] = false;
 			}
 		} else {
-			if(aktKnoten.getRight() == null) {
-				aktKnoten.setRight(new Knoten(null, p, null, !aktKnoten.isX()));
+			if(aktKnoten.right == null) {
+				aktKnoten.right = new Knoten(null, p, null, !aktKnoten.xOderY);
 				inserted[0] = true;
 				inserted[1] = true;
-			} else if(aktKnoten.getRight().getPunkt().equals(p)) {
-				aktKnoten.getRight().setPunkt(p);
+			} else if(aktKnoten.right.punkt.equals(p)) {
+				aktKnoten.right.punkt = p;
 				inserted[0] = false;
 				inserted[1] = true;
 			} else {
-				aktKnoten = aktKnoten.getRight();
+				aktKnoten = aktKnoten.right;
 				inserted[1] = false;
 			}
 		}
