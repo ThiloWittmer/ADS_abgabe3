@@ -85,29 +85,30 @@ public class ZweiDBaum implements PunktBaum {
     	inserted[1] = false;
     	Knoten aktKnoten = root;
     	while(!inserted[1]) {
-    		compareCoord(p, inserted, aktKnoten);
+    		aktKnoten = compareCoord(p, inserted, aktKnoten);
     	}
         return inserted[0];
     }
 
-	private void compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
+	private Knoten compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
 		if(aktKnoten.xOderY) {
 			if(p.getX() <= aktKnoten.getX()) {
 				//links
-				checkNext(p, aktKnoten, inserted, Richtung.LINKS);
+				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.LINKS);
 			} else {
 				//rechts
-				checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
+				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
 			}
 		} else {
 			if(p.getY() <= aktKnoten.getY()) {
 				//links
-				checkNext(p, aktKnoten, inserted, Richtung.LINKS);
+				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.LINKS);
 			} else {
 				//rechts
-				checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
+				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
 			}
 		}
+        return aktKnoten;
 	}
 
     /**
@@ -117,7 +118,7 @@ public class ZweiDBaum implements PunktBaum {
      * @param richtung true = links
      * @return
      */
-	private void checkNext(Punkt p, Knoten aktKnoten, boolean[] inserted, Richtung r) {
+	private Knoten checkNext(Punkt p, Knoten aktKnoten, boolean[] inserted, Richtung r) {
 		if(r == Richtung.LINKS) {
 			if(aktKnoten.left == null) {
 				aktKnoten.left = new Knoten(null, p, null, !aktKnoten.xOderY);
@@ -128,7 +129,7 @@ public class ZweiDBaum implements PunktBaum {
 				inserted[0] = false;
 				inserted[1] = true;
 			} else {
-				aktKnoten = new Knoten(aktKnoten.left, aktKnoten.punkt, aktKnoten.right, aktKnoten.xOderY);
+				aktKnoten = aktKnoten.left;
 				inserted[1] = false;
 			}
 		} else {
@@ -145,6 +146,7 @@ public class ZweiDBaum implements PunktBaum {
 				inserted[1] = false;
 			}
 		}
+        return aktKnoten;
 	}
 
     /**
