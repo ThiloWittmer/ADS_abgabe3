@@ -1,4 +1,4 @@
-package ueb9;
+//package ueb9;
 
 import java.util.*;
 import de.medieninf.ads.*;
@@ -18,6 +18,7 @@ public class PunktReader {
 	}
 	
 	public static void main(String... args) {
+		/**
 		if (args.length == 0) {
 			String[] defaultArgs = {
 					"zweidbaum/simple.dat"
@@ -35,7 +36,16 @@ public class PunktReader {
 					System.out.println();
 				}
 			}
-		}
+		}*/
+		Punkt a = new Punkt(50, 50, "A");
+		Punkt b = new Punkt(10, 70, "B");
+		Punkt c = new Punkt(80, 85, "C");
+		Punkt d = new Punkt(20, 25, "D");
+		ZweiDBaum tree = new ZweiDBaum(new ZweiDBaum(), a, new ZweiDBaum(), true);
+		tree.insert(b);
+		tree.insert(c);
+		tree.insert(d);
+		
 	}
 	
 }
