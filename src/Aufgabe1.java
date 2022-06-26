@@ -26,7 +26,7 @@ public class Aufgabe1 {
             // Mit Dateiname und ohne Parameter x und y wird jeder Punkt ausgegeben und schließlich die Anzahl der Punkte
             if (args.length == 1){
                 args = new String[]{"zweidbaum/" + filename};
-                ausgabe(args, filename);
+                ausgabe(args);
             }
 
             // Mit Dateiname und x und y Eingabe wird der Punkt an der Koordinate x × y ausgeben, wenn vorhanden
@@ -41,32 +41,23 @@ public class Aufgabe1 {
         else {
             String filename = "zweidbaum/simple.dat";
             args = new String[]{filename};
-            ausgabe(args, filename);
+            ausgabe(args);
         }
     }
 
-    private static void ausgabe(String[] args, String filename) {
-        int anzahlPunkte = 0;
+    private static void ausgabe(String[] args) {
         List<Punkt> listPunkte;
-
         for (String dateiName : args) {
-            System.out.println("\n\nPunkte in " + filename + ":\n");
             listPunkte = readPunkte(dateiName);
-            int count = 0;
-            for (Punkt punkt : listPunkte) {
-                anzahlPunkte += 1;
-                System.out.format("%20s", punkt);
-                if (++count % 4 == 0) {
-                    System.out.println();
-                }
-            }
+            ZweiDBaum zweiDBaum = createZweiDBaum(listPunkte);
+            zweiDBaum.printZweiDBaum();
         }
-        System.out.println("\n\nAnzahl der Punkte = " + anzahlPunkte);
     }
 
     private static void ausgabe(String filename, int gesuchte_X, int gesuchte_Y){
         List<Punkt> listPunkte = readPunkte("zweidbaum/" + filename);
         ZweiDBaum zweiDBaum = createZweiDBaum(listPunkte);
+        zweiDBaum.printZweiDBaum();
         Punkt gesucht = zweiDBaum.get(gesuchte_X, gesuchte_Y);
         String msg = gesucht == null
                 ? "\nPunkt mit x=" + gesuchte_X + " und y=" + gesuchte_Y + " NICHT gefunden."
@@ -82,7 +73,7 @@ public class Aufgabe1 {
         for (Punkt punkt : listPunkte.subList(1, listPunkte.size())) {
             zweiDBaum.insert(punkt);
         }
-        System.out.println("2D-Baum erstellt.");
+        System.out.println("\n2D-Baum erstellt:\n");
         return zweiDBaum;
     }
 }

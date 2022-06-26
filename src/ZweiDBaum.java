@@ -16,40 +16,6 @@ public class ZweiDBaum implements PunktBaum {
             this.xOderY = x;
         }
 
-        /**
-         * public Knoten getLeft() {
-         * return left;
-         * }
-         * <p>
-         * public void setLeft(Knoten left) {
-         * this.left = left;
-         * }
-         * <p>
-         * public Punkt getPunkt() {
-         * return punkt;
-         * }
-         * <p>
-         * public void setPunkt(Punkt punkt) {
-         * this.punkt = punkt;
-         * }
-         * <p>
-         * public Knoten getRight() {
-         * return right;
-         * }
-         * <p>
-         * public void setRight(Knoten right) {
-         * this.right = right;
-         * }
-         * <p>
-         * public boolean isX() {
-         * return xOderY;
-         * }
-         * <p>
-         * public void setXOderY(boolean x) {
-         * this.xOderY = x;
-         * }
-         */
-
         public int getX() {
             return punkt.getX();
         }
@@ -87,6 +53,96 @@ public class ZweiDBaum implements PunktBaum {
             }
             return ergebnis;
         }
+
+        /**
+         * Traversiert der ZweiDBaum in levelOrder
+         */
+        void printLevelOrder() {
+            int hoehe = hoehe(this);
+            for (int i = 1; i <= hoehe; i++) printAktuelleEbene(this, i);
+        }
+
+        /**
+         * Berechnet die "Höhe" des ZweiDBaums - die Anzahl der Knoten entlang des längsten Pfads
+         * vom Wurzelknoten bis hinunter zum am weitesten entfernten Blattknoten.
+         *
+         * @param root
+         * @return
+         */
+        int hoehe(Knoten root) {
+            if (root == null) return 0;
+            else {
+                int linkeHoehe = hoehe(root.left);
+                int rechteHoehe = hoehe(root.right);
+
+                // die größere Variante verwenden
+                if (linkeHoehe > rechteHoehe) return (linkeHoehe + 1);
+                else return (rechteHoehe + 1);
+            }
+        }
+
+        /**
+         * Gibt die Knoten auf der aktuellen Ebene aus
+         *
+         * @param root
+         * @param ebene
+         */
+        void printAktuelleEbene(Knoten root, int ebene) {
+            if (root == null) return;
+            if (ebene == 1) System.out.print(root.punkt + "\n");
+            else if (ebene > 1) {
+                printAktuelleEbene(root.left, ebene - 1);
+                printAktuelleEbene(root.right, ebene - 1);
+            }
+        }
+
+        /**
+         * Funktion zur Ermittlung der linken Höhe des ZweiDBaums
+         *
+         * @param knoten
+         * @return
+         */
+        int linkeHoehe(Knoten knoten) {
+            int hoeheLinks = 0;
+            while (knoten != null) {
+                hoeheLinks++;
+                knoten = knoten.left;
+            }
+            return hoeheLinks;
+        }
+
+        /**
+         * Funktion zur Ermittlung der rechten Höhe des ZweiDBaums
+         *
+         * @param hoehe
+         * @return
+         */
+        int rechteHoehe(Knoten hoehe) {
+            int hoeheRechts = 0;
+            while (hoehe != null) {
+                hoeheRechts++;
+                hoehe = hoehe.right;
+            }
+            return hoeheRechts;
+        }
+
+        /**
+         * Funktion zur Ermittlung der Anzahl von Knoten in dem vollständigen ZweiDBaum
+         *
+         * @param root
+         * @return
+         */
+        int anzahlKnoten(Knoten root) {
+            if (root == null) return 0;
+
+            int linkeHoehe = linkeHoehe(root);
+            int rechteHoehe = rechteHoehe(root);
+
+            // Wenn die linke und rechte Höhe gleich sind, wird 2^height * (1 << height) -1
+            if (linkeHoehe == rechteHoehe) return (1 << linkeHoehe) - 1;
+
+            return 1 + anzahlKnoten(root.left) + anzahlKnoten(root.right);
+        }
     }
 
     public ZweiDBaum() {
@@ -95,7 +151,6 @@ public class ZweiDBaum implements PunktBaum {
 
     public ZweiDBaum(ZweiDBaum left, Punkt punkt, ZweiDBaum right, boolean x) {
         root = new Knoten(left.root, punkt, right.root, x);
-        System.out.println("\nWurzel mit Punkt " + root.punkt + " erstellt.");
     }
 
     /**
@@ -114,9 +169,16 @@ public class ZweiDBaum implements PunktBaum {
         boolean[] inserted = new boolean[2];
         Knoten aktKnoten = root;
         while (!inserted[1]) {
+            assert aktKnoten != null;
             aktKnoten = compareCoord(p, inserted, aktKnoten);
         }
         return inserted[0];
+    }
+
+    public void printZweiDBaum() {
+        assert root != null;
+        root.printLevelOrder();
+        System.out.print("\nAnzahl der Punkten = " + root.anzahlKnoten(root) + "\n");
     }
 
     private Knoten compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
@@ -150,12 +212,10 @@ public class ZweiDBaum implements PunktBaum {
         if (r == Richtung.LINKS) {
             if (aktKnoten.left == null) {
                 aktKnoten.left = new Knoten(null, p, null, !aktKnoten.xOderY);
-                System.out.println("Blatt mit Punkt " + aktKnoten.left.punkt + " erstellt.");
                 inserted[0] = true;
                 inserted[1] = true;
             } else if (aktKnoten.left.punkt.equals(p)) {
                 aktKnoten.left.punkt = p;
-                System.out.println("Blatt mit Punkt " + p + " erstellt.");
                 inserted[0] = false;
                 inserted[1] = true;
             } else {
@@ -165,12 +225,10 @@ public class ZweiDBaum implements PunktBaum {
         } else {
             if (aktKnoten.right == null) {
                 aktKnoten.right = new Knoten(null, p, null, !aktKnoten.xOderY);
-                System.out.println("Blatt mit Punkt " + aktKnoten.right.punkt + " erstellt.");
                 inserted[0] = true;
                 inserted[1] = true;
             } else if (aktKnoten.right.punkt.equals(p)) {
                 aktKnoten.right.punkt = p;
-                System.out.println("Blatt mit Punkt " + p + " erstellt.");
                 inserted[0] = false;
                 inserted[1] = true;
             } else {
@@ -296,74 +354,3 @@ public class ZweiDBaum implements PunktBaum {
         return null;
     }
 }
-
-/*class ZweiDBaum implements PunktBaum {
-    private Knot  wurzeln;
-    private boolean akt;
-
-    @Override
-    public boolean insert(Punkt p) {
-            Knot aktPunkt = wurzeln;
-            Knot vorfahr = null;
-            this.akt = false;
-
-            if(!this.akt){
-                if(aktPunkt.x > p.getX()){
-                    vorfahr = aktPunkt;
-                    aktPunkt = aktPunkt.links;
-                }else if (aktPunkt.x < p.getX()){
-                    vorfahr = aktPunkt;
-                    aktPunkt = aktPunkt.recht;
-             }
-            }else {
-                if (aktPunkt.y > p.getY()){
-                    vorfahr= aktPunkt;
-                    aktPunkt = aktPunkt.links;
-                }else if(aktPunkt.y < p.getY()){
-                    vorfahr = aktPunkt;
-                    aktPunkt = aktPunkt.recht;
-                }
-            }this.akt = !this.akt;
-
-
-        return true;
-    }
-
-    @Override
-    public Punkt get(int x, int y) {
-        Knot aktPunkt = wurzeln;
-        boolean gefunden = false;
-        this.akt = false;
-
-        if(!this.akt){
-            if(aktPunkt.x > x){
-                aktPunkt = aktPunkt.links;
-            }else if(aktPunkt.x < x){
-                aktPunkt = aktPunkt.recht;
-            }else {
-                if(aktPunkt.y == y){
-                    gefunden = true;
-                    return aktPunkt.point;
-                }
-            }
-        }else{
-            if(aktPunkt.y > y){
-                aktPunkt = aktPunkt.links;
-            }else if(aktPunkt.y < y){
-                aktPunkt = aktPunkt.recht;
-            }else {
-                if(aktPunkt.x == x){
-                    gefunden = true;
-                    return aktPunkt.point;
-                }
-            }
-
-        }
-        return null;
-    }
-
-
-
-
-
-}*/
