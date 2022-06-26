@@ -1,10 +1,9 @@
 import java.util.Iterator;
-// import ueb9.Punkt;
 
 public class ZweiDBaum implements PunktBaum {
-    private Knoten root;
-    
-    private class Knoten {
+    private final Knoten root;
+
+    private static class Knoten {
         Knoten left;
         Punkt punkt;
         Knoten right;
@@ -18,47 +17,76 @@ public class ZweiDBaum implements PunktBaum {
         }
 
         /**
-        public Knoten getLeft() {
-            return left;
-        }
+         * public Knoten getLeft() {
+         * return left;
+         * }
+         * <p>
+         * public void setLeft(Knoten left) {
+         * this.left = left;
+         * }
+         * <p>
+         * public Punkt getPunkt() {
+         * return punkt;
+         * }
+         * <p>
+         * public void setPunkt(Punkt punkt) {
+         * this.punkt = punkt;
+         * }
+         * <p>
+         * public Knoten getRight() {
+         * return right;
+         * }
+         * <p>
+         * public void setRight(Knoten right) {
+         * this.right = right;
+         * }
+         * <p>
+         * public boolean isX() {
+         * return xOderY;
+         * }
+         * <p>
+         * public void setXOderY(boolean x) {
+         * this.xOderY = x;
+         * }
+         */
 
-        public void setLeft(Knoten left) {
-            this.left = left;
-        }
-
-        public Punkt getPunkt() {
-            return punkt;
-        }
-
-        public void setPunkt(Punkt punkt) {
-            this.punkt = punkt;
-        }
-
-        public Knoten getRight() {
-            return right;
-        }
-
-        public void setRight(Knoten right) {
-            this.right = right;
-        }
-
-        public boolean isX() {
-            return xOderY;
-        }
-
-        public void setXOderY(boolean x) {
-            this.xOderY = x;
-        }
-        */
-        
         public int getX() {
-        	return punkt.getX();
+            return punkt.getX();
         }
-        
+
         public int getY() {
-        	return punkt.getY();
+            return punkt.getY();
         }
-       
+
+        /**
+         * Der Baum wird anhand von Bedingungen durchlaufen, die die Suchrichtung festlegen.
+         * Die Bedingungen vergleichen die Werte von x und y des aktuellen Punktes des Knotens
+         * mit den gesuchten x und y.
+         *
+         * @param aktKnoten  Knoten der gerade nach x und y Werte durchsucht wird
+         * @param gesuchte_X gesuchte x-Koordinate der Punkt
+         * @param gesuchte_Y gesuchte y-Koordinate der Punkt
+         * @return Punkt als ergebnis, null wenn nicht gefunden
+         */
+        private Punkt suchePunkt(Knoten aktKnoten, int gesuchte_X, int gesuchte_Y) {
+            if (aktKnoten == null) return null;
+
+            Punkt ergebnis;
+            int akt_X = aktKnoten.getX();
+            int akt_Y = aktKnoten.getY();
+
+            if (akt_X == gesuchte_X && akt_Y == gesuchte_Y) {
+                return aktKnoten.punkt;
+            } else if (gesuchte_X >= akt_X && gesuchte_Y >= akt_Y
+                    || gesuchte_X <= akt_X && gesuchte_Y >= akt_Y) {
+                ergebnis = suchePunkt(aktKnoten.right, gesuchte_X, gesuchte_Y);
+                if (ergebnis == null) return suchePunkt(aktKnoten.left, gesuchte_X, gesuchte_Y);
+            } else {
+                ergebnis = suchePunkt(aktKnoten.left, gesuchte_X, gesuchte_Y);
+                if (ergebnis == null) return suchePunkt(aktKnoten.right, gesuchte_X, gesuchte_Y);
+            }
+            return ergebnis;
+        }
     }
 
     public ZweiDBaum() {
@@ -67,87 +95,91 @@ public class ZweiDBaum implements PunktBaum {
 
     public ZweiDBaum(ZweiDBaum left, Punkt punkt, ZweiDBaum right, boolean x) {
         root = new Knoten(left.root, punkt, right.root, x);
+        System.out.println("\nWurzel mit Punkt " + root.punkt + " erstellt.");
     }
 
     /**
      * Einfügen eines Punktes. Falls schon ein Punkt mit gleichem x und y Wert
      * enthalten war, dann wird der Punkt überschrieben (Rückgabe false).
      * Ansonsten wird der Punkt neu eingefügt (Rückgabe true).
+     * <p>
+     * inserted[0] = true, wenn neuer Punkt; false, wenn überschrieben
+     * inserted[1] = true, wenn eingefügt, sonst false
      *
      * @param p Punkt, der einzufügen ist
-     * @param inserted[0] true, wenn neuer Punkt; false, wenn �berschrieben
-     * @param inserted[1] true, wenn eingef�gt, sonst false
      * @return true gdw Punkt wurde neu eingefügt, false sonst
      */
     @Override
     public boolean insert(Punkt p) {
-    	boolean inserted[] = new boolean[2];
-    	inserted[1] = false;
-    	Knoten aktKnoten = root;
-    	while(!inserted[1]) {
-    		aktKnoten = compareCoord(p, inserted, aktKnoten);
-    	}
+        boolean[] inserted = new boolean[2];
+        Knoten aktKnoten = root;
+        while (!inserted[1]) {
+            aktKnoten = compareCoord(p, inserted, aktKnoten);
+        }
         return inserted[0];
     }
 
-	private Knoten compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
-		if(aktKnoten.xOderY) {
-			if(p.getX() <= aktKnoten.getX()) {
-				//links
-				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.LINKS);
-			} else {
-				//rechts
-				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
-			}
-		} else {
-			if(p.getY() <= aktKnoten.getY()) {
-				//links
-				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.LINKS);
-			} else {
-				//rechts
-				aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
-			}
-		}
+    private Knoten compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
+        if (aktKnoten.xOderY) {
+            if (p.getX() <= aktKnoten.getX()) {
+                //links
+                aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.LINKS);
+            } else {
+                //rechts
+                aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
+            }
+        } else {
+            if (p.getY() <= aktKnoten.getY()) {
+                //links
+                aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.LINKS);
+            } else {
+                //rechts
+                aktKnoten = checkNext(p, aktKnoten, inserted, Richtung.RECHTS);
+            }
+        }
         return aktKnoten;
-	}
+    }
 
     /**
-     * 
      * @param p
      * @param aktKnoten
-     * @param richtung true = links
+     * @param "richtung" true = links
      * @return
      */
-	private Knoten checkNext(Punkt p, Knoten aktKnoten, boolean[] inserted, Richtung r) {
-		if(r == Richtung.LINKS) {
-			if(aktKnoten.left == null) {
-				aktKnoten.left = new Knoten(null, p, null, !aktKnoten.xOderY);
-				inserted[0] = true;
-				inserted[1] = true;
-			} else if(aktKnoten.left.punkt.equals(p)) {
-				aktKnoten.left.punkt = p;
-				inserted[0] = false;
-				inserted[1] = true;
-			} else {
-				aktKnoten = aktKnoten.left;
-				inserted[1] = false;
-			}
-		} else {
-			if(aktKnoten.right == null) {
-				aktKnoten.right = new Knoten(null, p, null, !aktKnoten.xOderY);
-				inserted[0] = true;
-				inserted[1] = true;
-			} else if(aktKnoten.right.punkt.equals(p)) {
-				aktKnoten.right.punkt = p;
-				inserted[0] = false;
-				inserted[1] = true;
-			} else {
-				aktKnoten = aktKnoten.right;
-				inserted[1] = false;
-			}
-		}
+    private Knoten checkNext(Punkt p, Knoten aktKnoten, boolean[] inserted, Richtung r) {
+        if (r == Richtung.LINKS) {
+            if (aktKnoten.left == null) {
+                aktKnoten.left = new Knoten(null, p, null, !aktKnoten.xOderY);
+                System.out.println("Blatt mit Punkt " + aktKnoten.left.punkt + " erstellt.");
+                inserted[0] = true;
+                inserted[1] = true;
+            } else if (aktKnoten.left.punkt.equals(p)) {
+                aktKnoten.left.punkt = p;
+                System.out.println("Blatt mit Punkt " + p + " erstellt.");
+                inserted[0] = false;
+                inserted[1] = true;
+            } else {
+                aktKnoten = aktKnoten.left;
+                inserted[1] = false;
+            }
+        } else {
+            if (aktKnoten.right == null) {
+                aktKnoten.right = new Knoten(null, p, null, !aktKnoten.xOderY);
+                System.out.println("Blatt mit Punkt " + aktKnoten.right.punkt + " erstellt.");
+                inserted[0] = true;
+                inserted[1] = true;
+            } else if (aktKnoten.right.punkt.equals(p)) {
+                aktKnoten.right.punkt = p;
+                System.out.println("Blatt mit Punkt " + p + " erstellt.");
+                inserted[0] = false;
+                inserted[1] = true;
+            } else {
+                aktKnoten = aktKnoten.right;
+                inserted[1] = false;
+            }
+        }
         return aktKnoten;
-	}
+    }
 
     /**
      * Holen eines Punkts. Falls ein Punkt mit gleichem x und gleichem y Wert
@@ -160,7 +192,17 @@ public class ZweiDBaum implements PunktBaum {
      */
     @Override
     public Punkt get(int x, int y) {
-        return null;
+        assert root != null;
+
+        // Wenn es schon die Wurzel ist, gibt sie zurück → Baum muss nicht durchlaufen werden.
+        if (root.getX() == x && root.getY() == y) return root.punkt;
+
+        /* 1. Knoten wird übersprungen, muss nicht mehr überprüft werden. Durch den Vergleich
+              des x-Wertes kann bereits entschieden werden, in welche Richtung gesucht werden soll.
+              Es muss nur die Hälfte des Baumes durchsucht werden → nach links ∨ rechts. */
+
+        if (x <= 50) return root.suchePunkt(root.left, x, y);
+        else return root.suchePunkt(root.right, x, y);
     }
 
     /**
