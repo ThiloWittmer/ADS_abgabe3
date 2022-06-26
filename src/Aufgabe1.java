@@ -5,39 +5,6 @@ public class Aufgabe1 {
 
     public static void main(String... args) {
         checkParameter(args);
-
-        // Wurde für Starttests verwendet
-        /*Punkt a = new Punkt(50, 50, "A");
-        Punkt b = new Punkt(10, 70, "B");
-        Punkt c = new Punkt(80, 85, "C");
-        Punkt d = new Punkt(20, 25, "D");
-        Punkt e = new Punkt(0, 85, "E");
-        Punkt f = new Punkt(70, 85, "F");
-        Punkt[] punkte = {a, b, c, d, e, f};
-
-        ZweiDBaum tree = new ZweiDBaum(new ZweiDBaum(), a, new ZweiDBaum(), true);
-        tree.insert(b);
-        tree.insert(c);
-        tree.insert(d);
-        tree.insert(e);
-        tree.insert(f);
-
-        // Test → Versuchen alle erstellten Punkte zu durchsuchen.
-        for (Punkt punkt : punkte){
-            Punkt gesucht = tree.get(punkt.getX(), punkt.getY());
-            String msg = gesucht == null
-                    ? "\n❌ Punkt " + punkt.getText() + "(" + punkt.getX() + "," + punkt.getY() + ") NICHT gefunden."
-                    : "\n✅ Punkt " + gesucht + " gefunden.";
-            System.out.print(msg);
-        }
-        System.out.println();*/
-
-        // Test → Für den Fall, dass ein bestimmter erstellter Punkt nicht gefunden wird.
-        /*Punkt gesucht = tree.get(70, 85);
-        String msg = gesucht == null
-                ? "\n❌ Punkt NICHT gefunden."
-                : "\n✅ Punkt " + gesucht.toString() + " gefunden.";
-        System.out.println(msg);*/
     }
 
     public static List<Punkt> readPunkte(String dateiname) {
