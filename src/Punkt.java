@@ -1,54 +1,52 @@
-package ueb9;
-
 /**
- * Punkt repräsentiert einen unveränderlichen Datensatz mit zwei 
+ * Punkt repräsentiert einen unveränderlichen Datensatz mit zwei
  * zu diskrimierenden Integer Werten und eine String Nutzinformation
  */
 public class Punkt {
 	private int x;
 	private int y;
 	private String text;
-	
+
 	public Punkt(int x, int y, String text) {
 		this.x = x;
 		this.y = y;
 		this.text = text;
 	}
-	
+
 	/**
 	 * @return x Wert des Punkts
 	 */
-	public int getX() { 
-		return x; 
+	public int getX() {
+		return x;
 	}
-	
+
 	/**
 	 * @return y Wert des Punkts
 	 */
-	public int getY() { 
-		return y; 
+	public int getY() {
+		return y;
 	}
-	
+
 	/**
 	 * @return Text des Punkts
 	 */
-	public String getText() { 
-		return text; 
+	public String getText() {
+		return text;
 	}
 
 	/**
 	 * Abstand des Punkts zu einem anderen Punkt p.
 	 * @see #getAbstand(int, int)
-	 * @param p Punkt zu dem der Abstand berechnet wird 
+	 * @param p Punkt zu dem der Abstand berechnet wird
 	 * @return double Abstand
 	 */
 	public double getAbstand(Punkt p) {
 		return getAbstand(p.x, p.y);
 	}
-	
+
 	/**
 	 * Abstand des Punkts zu einem anderen Punkt p.
-	 * Die Wurzel der Summe der quadratischen Abstände 
+	 * Die Wurzel der Summe der quadratischen Abstände
 	 * der Differenzen der x und y Werte.
 	 * @param x int x Wert des anderen Punkts p
 	 * @param y int y Wert des anderen Punkts p
@@ -59,7 +57,7 @@ public class Punkt {
 		double ady = this.y - y;
 		return Math.sqrt(adx*adx + ady*ady);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -80,7 +78,7 @@ public class Punkt {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -93,7 +91,7 @@ public class Punkt {
 
 	@Override
 	public String toString() {
-		return String.format("%s(%d,%d)", text, x, y);
+		return String.format("%s\t(%d,%d)", text, x, y);
 	}
-	
+
 }
