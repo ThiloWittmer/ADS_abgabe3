@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class ZweiDBaum implements PunktBaum {
     private final Knoten root;
@@ -54,6 +56,30 @@ public class ZweiDBaum implements PunktBaum {
             return ergebnis;
         }
 
+        static List<Knoten> traverseLevelOrder(Knoten root) {
+            List<Knoten> knotenListe = new ArrayList<>();
+            int height = hoehe(root);
+            for (int j = 1; j <= height; j++) {
+                traverseCurrentLevel(root, j, knotenListe);
+            }
+            return knotenListe;
+        }
+
+        static void traverseCurrentLevel(Knoten root, int level, List<Knoten> knotenListe) {
+            if (root == null) return;
+
+            // l == 1 means only one node is present in the binary tree
+            if (level == 1) knotenListe.add(root);
+
+                /* l > 1 means either there are nodes present in the left side of the current node or in the
+                 * right side of the current node or in both sides therefore, we have to look in the left as well as in
+                 * the right side of the current node */
+            else if (level > 1) {
+                traverseCurrentLevel(root.left, level - 1, knotenListe);
+                traverseCurrentLevel(root.right, level - 1, knotenListe);
+            }
+        }
+
         /**
          * Traversiert der ZweiDBaum in levelOrder
          */
@@ -69,7 +95,7 @@ public class ZweiDBaum implements PunktBaum {
          * @param root
          * @return
          */
-        int hoehe(Knoten root) {
+        static int hoehe(Knoten root) {
             if (root == null) return 0;
             else {
                 int linkeHoehe = hoehe(root.left);
@@ -102,7 +128,7 @@ public class ZweiDBaum implements PunktBaum {
          * @param knoten
          * @return
          */
-        int linkeHoehe(Knoten knoten) {
+        static int linkeHoehe(Knoten knoten) {
             int hoeheLinks = 0;
             while (knoten != null) {
                 hoeheLinks++;
@@ -117,7 +143,7 @@ public class ZweiDBaum implements PunktBaum {
          * @param hoehe
          * @return
          */
-        int rechteHoehe(Knoten hoehe) {
+        static int rechteHoehe(Knoten hoehe) {
             int hoeheRechts = 0;
             while (hoehe != null) {
                 hoeheRechts++;
@@ -132,7 +158,7 @@ public class ZweiDBaum implements PunktBaum {
          * @param root
          * @return
          */
-        int anzahlKnoten(Knoten root) {
+        static int anzahlKnoten(Knoten root) {
             if (root == null) return 0;
 
             int linkeHoehe = linkeHoehe(root);
@@ -142,6 +168,23 @@ public class ZweiDBaum implements PunktBaum {
             if (linkeHoehe == rechteHoehe) return (1 << linkeHoehe) - 1;
 
             return 1 + anzahlKnoten(root.left) + anzahlKnoten(root.right);
+        }
+    }
+
+    static class ZweiDBaumIterator {
+        List<Knoten> knotenListe;
+        int index = 0;
+
+        public ZweiDBaumIterator(Knoten root) {
+            knotenListe = Knoten.traverseLevelOrder(root);
+        }
+
+        public Knoten next() {
+            return knotenListe.get(index++);
+        }
+
+        public boolean hasNext() {
+            return index < knotenListe.size();
         }
     }
 
@@ -178,7 +221,7 @@ public class ZweiDBaum implements PunktBaum {
     public void printZweiDBaum() {
         assert root != null;
         root.printLevelOrder();
-        System.out.print("\nAnzahl der Punkten = " + root.anzahlKnoten(root) + "\n");
+        System.out.print("\nAnzahl der Punkten = " + Knoten.anzahlKnoten(root) + "\n");
     }
 
     private Knoten compareCoord(Punkt p, boolean[] inserted, Knoten aktKnoten) {
@@ -303,7 +346,20 @@ public class ZweiDBaum implements PunktBaum {
      */
     @Override
     public Iterator<Punkt> iterator(int xmin, int xmax, int ymin, int ymax) {
-        return null;
+        ZweiDBaumIterator it_Baum = new ZweiDBaumIterator(root);
+        List<Punkt> punktListe = new ArrayList<>();
+        System.out.println(" mit x,y Werten, so dass " + xmin + " <= x <= " + xmax + " und " + ymin + " <= y <= " + ymax);
+
+        while (it_Baum.hasNext()) {
+            Knoten k = it_Baum.next();
+            int x = k.getX();
+            int y = k.getY();
+            if (x >= xmin && x <= xmax && y >= ymin && y <= ymax) {
+                punktListe.add(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+                System.out.println(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+            }
+        }
+        return punktListe.iterator();
     }
 
     /**
@@ -316,7 +372,17 @@ public class ZweiDBaum implements PunktBaum {
      */
     @Override
     public Iterator<Punkt> iteratorx(int xmin, int xmax) {
-        return null;
+        ZweiDBaumIterator it_Baum = new ZweiDBaumIterator(root);
+        List<Punkt> punktListe = new ArrayList<>();
+        System.out.println("\nAlle Punkte mit x zwischen " + xmin + " und " + xmax);
+        while (it_Baum.hasNext()) {
+            int x = it_Baum.next().getX();
+            if (x >= xmin && x <= xmax) {
+                punktListe.add(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+                System.out.println(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+            }
+        }
+        return punktListe.iterator();
     }
 
     /**
@@ -327,7 +393,16 @@ public class ZweiDBaum implements PunktBaum {
      */
     @Override
     public Iterator<Punkt> iteratorx(int x) {
-        return null;
+        ZweiDBaumIterator it_Baum = new ZweiDBaumIterator(root);
+        List<Punkt> punktListe = new ArrayList<>();
+        System.out.println("\nAlle Punkte mit x=" + x);
+        while (it_Baum.hasNext()) {
+            if (it_Baum.next().getX() == x) {
+                punktListe.add(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+                System.out.println(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+            }
+        }
+        return punktListe.iterator();
     }
 
     /**
@@ -340,7 +415,17 @@ public class ZweiDBaum implements PunktBaum {
      */
     @Override
     public Iterator<Punkt> iteratory(int ymin, int ymax) {
-        return null;
+        ZweiDBaumIterator it_Baum = new ZweiDBaumIterator(root);
+        List<Punkt> punktListe = new ArrayList<>();
+        System.out.println("\nAlle Punkte mit y zwischen " + ymin + " und " + ymax);
+        while (it_Baum.hasNext()) {
+            int y = it_Baum.next().getY();
+            if (y >= ymin && y <= ymax) {
+                punktListe.add(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+                System.out.println(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+            }
+        }
+        return punktListe.iterator();
     }
 
     /**
@@ -351,6 +436,45 @@ public class ZweiDBaum implements PunktBaum {
      */
     @Override
     public Iterator<Punkt> iteratory(int y) {
-        return null;
+        ZweiDBaumIterator it_Baum = new ZweiDBaumIterator(root);
+        List<Punkt> punktListe = new ArrayList<>();
+        System.out.println("\nAlle Punkte mit y=" + y);
+        while (it_Baum.hasNext()) {
+            if (it_Baum.next().getY() == y) {
+                punktListe.add(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+                System.out.println(it_Baum.knotenListe.get(it_Baum.index - 1).punkt);
+            }
+        }
+        return punktListe.iterator();
+    }
+
+    public void suchePunkte() {
+        ZweiDBaumIterator it_Baum = new ZweiDBaumIterator(root);
+        List<Punkt> gefundenePunkte = new ArrayList<>();
+        Knoten k;
+        if (root != null) {
+            while (it_Baum.hasNext()) {
+                gefundenePunkte.clear();
+                k = it_Baum.next();
+                System.out.println("\nPunkte die sich im Rechteck " + k.punkt + " befinden:");
+                if (k.left != null) suchePunkteLinks(k, gefundenePunkte);
+                System.out.println(gefundenePunkte.size() + " Punkte gefunden.\n________________________________________________");
+                if (it_Baum.hasNext()) it_Baum.next();
+            }
+        }
+    }
+
+    private void suchePunkteLinks(Knoten knoten, List<Punkt> gefundenePunkte) {
+        if (knoten.left != null) {
+            System.out.println(knoten.left.punkt);
+            gefundenePunkte.add(knoten.left.punkt);
+        }
+        if (knoten.left != null && knoten.left.right != null) {
+            System.out.println(knoten.left.right.punkt);
+            gefundenePunkte.add(knoten.left.right.punkt);
+            if (knoten.left.right.left != null) suchePunkteLinks(knoten.left.right, gefundenePunkte);
+        }
+        if (knoten.left != null && knoten.left.left == null && knoten.left.right == null) return;
+        suchePunkteLinks(knoten.left, gefundenePunkte);
     }
 }

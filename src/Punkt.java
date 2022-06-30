@@ -91,7 +91,7 @@ public class Punkt {
 
 	@Override
 	public String toString() {
-		return String.format("%s\t(%d,%d)", text, x, y);
+		return String.format("%s(%d,%d)", text, x, y);
 	}
 
 }
